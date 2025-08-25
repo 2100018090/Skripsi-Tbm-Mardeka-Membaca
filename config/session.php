@@ -31,8 +31,7 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 120),
-
+    'lifetime' => 120, // expire dalam 120 menit (2 jam)
     'expire_on_close' => false,
 
     /*

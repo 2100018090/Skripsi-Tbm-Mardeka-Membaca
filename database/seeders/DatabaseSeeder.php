@@ -3,7 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Admin;
+use App\Models\Akun;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,5 +22,23 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        $akun = Akun::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'username' => 'Admin',
+                'password' => Hash::make('password'), // ganti sesuai kebutuhan
+                'role' => 'admin'
+            ]
+        );
+
+        Admin::firstOrCreate([
+            'id_akun' => $akun->id,
+        ], [
+            'nama' => 'Admin Default',
+            'alamat' => 'Alamat Admin',
+            'notlp' => '081234567890',
+            'img' => null,
+        ]);
     }
 }

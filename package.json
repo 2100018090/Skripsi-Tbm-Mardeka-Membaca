@@ -5,6 +5,7 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@tailwindcss/line-clamp": "^0.4.4",
         "autoprefixer": "^10.4.20",
         "axios": "^1.1.2",
         "flowbite": "^2.5.2",
@@ -15,6 +16,8 @@
     },
     "dependencies": {
         "apexcharts": "^3.54.0",
-        "flowbite-typography": "^1.0.4"
+        "flowbite-typography": "^1.0.4",
+        "laravel-echo": "^2.1.4",
+        "pusher-js": "^8.4.0"
     }
 }

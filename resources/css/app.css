@@ -12,6 +12,31 @@
     }
 }
 
+@layer utilities {
+  @keyframes fade-scale {
+    0%   {opacity:0; transform:scale(.9)}
+    100% {opacity:1; transform:scale(1)}
+  }
+  .animate-fade-scale {
+    animation: fade-scale .35s ease-out forwards;
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+
 /* chart styles */
 .apexcharts-tooltip {
   @apply bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-0 rounded-lg shadow-lg !important;

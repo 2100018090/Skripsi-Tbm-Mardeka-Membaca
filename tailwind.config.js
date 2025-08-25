@@ -7,6 +7,9 @@ module.exports = {
     ],
     theme: {
       extend: {
+        fontFamily: {
+          poppins: ['Poppins', 'sans-serif'],
+        },
         colors: {
           primary: {
             50: '#eff6ff',
@@ -20,6 +23,8 @@ module.exports = {
             800: '#1e40af',
             900: '#1e3a8a',   
             950: '#172554',
+            951: '#64c0b7',
+            952: '#003350', 
           }
       },
       },
