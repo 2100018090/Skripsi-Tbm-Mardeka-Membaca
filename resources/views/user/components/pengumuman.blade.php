@@ -14,7 +14,7 @@
         <div id="list-view" class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($pengumumans as $index => $item)
                 <div class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-lg transition p-4 flex flex-col">
-                    <img src="{{ env('SUPABASE_URL') . '/storage/v1/object/public/my-files/' . $item->img }}"
+                    <img src="{{ $item->img ? asset('storage/' . $item->img) : asset('storage/default.png') }}"
                         alt="Gambar" class="w-full h-36 object-cover rounded-md mb-4">
 
                     <div class="flex justify-between items-start mb-2">
@@ -28,8 +28,7 @@
                         {{ Str::limit(strip_tags($item->isi), 100, '...') }}
                     </p>
 
-                    <button type="button"
-                        onclick="showDetail({{ $index }})"
+                    <button type="button" onclick="showDetail({{ $index }})"
                         class="mt-4 px-4 py-2 bg-[#64C0B7] hover:bg-[#57b1a9] text-white rounded-md transition">
                         Lihat Detail
                     </button>
@@ -87,9 +86,9 @@
             const formattedIsi = ann.isi.replace(/\n/g, "<br>");
             document.getElementById('detail-content').innerHTML = formattedIsi;
 
-            const imgUrl = ann.img
-                ? `${SUPABASE_URL}/storage/v1/object/public/my-files/${ann.img}`
-                : '/storage/pengumuman/default.png';
+            const imgUrl = ann.img ?
+                `/storage/${ann.img}` :
+                '/storage/pengumuman/default.png';
             document.getElementById('detail-image').src = imgUrl;
 
             // Sembunyikan list dan pagination, tampilkan detail
@@ -104,7 +103,9 @@
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({ judul: ann.judul })
+                body: JSON.stringify({
+                    judul: ann.judul
+                })
             });
         }
 

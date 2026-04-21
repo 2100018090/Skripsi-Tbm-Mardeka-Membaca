@@ -693,6 +693,9 @@ class Controller extends BaseController
     public function createVoluntter(Request $request)
     {
         try {
+            // =========================
+            // 1. VALIDASI
+            // =========================
             $validated = $request->validate([
                 'email'    => 'required|email|unique:akuns,email',
                 'username' => 'required|string|max:255|unique:akuns,username',
@@ -709,47 +712,36 @@ class Controller extends BaseController
         DB::beginTransaction();
 
         try {
-            // ✅ Buat akun dengan token dan email_verified langsung
+            // =========================
+            // 2. BUAT AKUN
+            // =========================
             $akun = Akun::create([
                 'email'             => $validated['email'],
                 'username'          => $validated['username'],
                 'password'          => Hash::make($validated['password']),
                 'role'              => 'voluntter',
                 'session_token'     => Str::random(60),
-                'email_verified_at' => now(), // ✅ langsung dianggap terverifikasi
+                'email_verified_at' => now(),
             ]);
 
             $imgPath = null;
 
+            // =========================
+            // 3. UPLOAD GAMBAR (LOCAL)
+            // =========================
             if ($request->hasFile('img')) {
-                $file     = $request->file('img');
-                $ext      = $file->getClientOriginalExtension();
+
+                $file = $request->file('img');
+                $ext = $file->getClientOriginalExtension();
                 $filename = 'voluntter-' . Str::uuid() . '.' . $ext;
-                $filePath = "voluntter/{$filename}";
-                $fileBytes = file_get_contents($file->getPathname());
 
-                $url = rtrim(env('SUPABASE_URL'), '/') .
-                    "/storage/v1/object/" .
-                    env('SUPABASE_BUCKET') .
-                    "/{$filePath}";
-
-                $response = Http::withHeaders([
-                    'apikey'        => env('SUPABASE_SERVICE_ROLE_KEY'),
-                    'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_ROLE_KEY'),
-                    'Content-Type'  => $file->getMimeType(),
-                ])
-                    ->withBody($fileBytes, $file->getMimeType())
-                    ->put($url);
-
-                if (!$response->successful()) {
-                    return back()->withErrors([
-                        'img' => 'Upload gambar ke Supabase gagal: ' . $response->body()
-                    ])->withInput();
-                }
-
-                $imgPath = $filePath;
+                // simpan ke storage/app/public/voluntter
+                $imgPath = $file->storeAs('voluntter', $filename, 'public');
             }
 
+            // =========================
+            // 4. SIMPAN VOLUNTTER
+            // =========================
             Voluntter::create([
                 'id_akun' => $akun->id,
                 'nama'    => $validated['nama'],
@@ -762,7 +754,12 @@ class Controller extends BaseController
 
             return redirect()->route('admin.data_voluntter')
                 ->with('success', '✅ Voluntter berhasil dibuat!');
-        } catch (\Illuminate\Database\QueryException $e) {
+        }
+
+        // =========================
+        // 5. ERROR HANDLING
+        // =========================
+        catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
 
             if (str_contains($e->getMessage(), 'Duplicate entry')) {
@@ -775,13 +772,18 @@ class Controller extends BaseController
                 'error_message' => $e->getMessage(),
                 'request_data'  => $request->except('password'),
             ]);
+
             return back()->with('error', 'Terjadi kesalahan saat menyimpan ke database.');
-        } catch (\Throwable $e) {
+        }
+
+        catch (\Throwable $e) {
             DB::rollBack();
+
             Log::error('Gagal membuat voluntter', [
                 'error_message' => $e->getMessage(),
                 'request_data'  => $request->except('password'),
             ]);
+
             return back()->with('error', 'Gagal membuat voluntter: ' . $e->getMessage());
         }
     }

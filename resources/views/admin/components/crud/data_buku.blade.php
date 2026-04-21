@@ -3,9 +3,7 @@
         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
             <td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
                 <img class="w-10 h-10 rounded-full"
-                    src="{{ $buku->img
-                        ? 'https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/' . $buku->img
-                        : asset('storage/buku/default.png') }}"
+                    src="{{ $buku->img ? asset('storage/' . $buku->img) : asset('storage/buku/default.png') }}"
                     alt="user photo">
 
                 <div class="text-sm font-normal text-gray-500 dark:text-gray-400">

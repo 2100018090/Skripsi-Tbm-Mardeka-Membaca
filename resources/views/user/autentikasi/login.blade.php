@@ -7,17 +7,7 @@
         <div class="flex-1 relative bg-white flex items-center justify-center flex-col md:flex-row">
             <!-- Logo -->
             <div class="absolute top-[-60px] left-6 md:top-[-64px] md:left-6">
-                @php
-                    $logoPage = \App\Models\Page::where('slug', 'logo_login')->first();
-                @endphp
-
-                @if ($logoPage && $logoPage->img)
-                    <img class="w-48 h-48"
-                        src="https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/{{ $logoPage->img }}"
-                        alt="Logo Login">
-                @else
-                    <p>Logo belum tersedia</p>
-                @endif
+                <img src="{{ asset('storage/icon/logo.svg') }}" alt="Logo" class="w-48 h-48">
             </div>
 
             <!-- Gambar Buku untuk mobile -->

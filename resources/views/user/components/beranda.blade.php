@@ -25,7 +25,7 @@
                                 <div class="swiper-slide">
                                     <div
                                         class="bg-white rounded-2xl shadow-md p-6 flex flex-col md:flex-row gap-6 hover:shadow-xl transition">
-                                        <img src="{{ rtrim(env('SUPABASE_URL'), '/') . '/storage/v1/object/public/' . env('SUPABASE_BUCKET') . '/' . $buku->img }}"
+                                        <img src="{{ $buku->img ? asset('storage/' . $buku->img) : asset('storage/buku/default.png') }}"
                                             alt="{{ $buku->judul }}"
                                             class="w-40 h-60 object-cover rounded-xl border shadow-sm" />
                                         <div class="flex-1 text-left">
@@ -168,16 +168,7 @@
         <div class="mt-12 md:mt-16 flex flex-col md:flex-row items-center justify-center gap-10 px-4 md:px-20">
             <!-- Gambar kiri -->
             <div class="flex-shrink-0">
-                @php
-                    $logoPage = \App\Models\Page::where('slug', 'visi')->first();
-                    $page = \App\Models\Page::where('slug', 'visi')->first();
-                @endphp
-
-                @if ($logoPage && $logoPage->img)
-                    <img class="h-[220px] md:h-[330px] w-auto"
-                        src="https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/{{ $logoPage->img }}"
-                        alt="tentang">
-                @endif
+                <img class="h-[220px] md:h-[330px] w-auto" src="{{ asset('storage/img/tentang.jpg') }}" alt="tentang">
             </div>
 
             <!-- Teks kanan -->
@@ -186,9 +177,8 @@
                     Visi TBM Mardeka Membaca
                 </h2>
                 <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6 text-center md:text-justify">
-                    @if ($page && $page->content)
-                        {!! $page->content !!}
-                    @endif
+                    Menjadi pusat literasi masyarakat yang inklusif dan inspiratif untuk menumbuhkan budaya baca, belajar,
+                    dan berkarya di semua kalangan.
                 </p>
 
                 <h2 class="text-lg md:text-2xl font-bold text-[#64C0B7] mb-3 md:mb-4 text-center md:text-left">
@@ -196,12 +186,15 @@
                 </h2>
                 <ul
                     class="list-disc list-outside pl-5 text-gray-700 leading-relaxed space-y-2 text-sm md:text-base text-justify">
-                    @php
-                        $page = \App\Models\Page::where('slug', 'misi')->first();
-                    @endphp
-                    @if ($page && $page->content)
-                        {!! $page->content !!}
-                    @endif
+                    <li>Mendorong minat baca masyarakat melalui penyediaan bahan bacaan yang beragam dan berkualitas.</li>
+                    <li>Menyediakan ruang belajar terbuka yang ramah, inklusif, dan mendukung pengembangan potensi individu.
+                    </li>
+                    <li>Mengadakan kegiatan edukatif dan kreatif, seperti kelas menulis, dongeng, dan diskusi buku secara
+                        rutin.</li>
+                    <li>Berjejaring dengan komunitas dan lembaga pendidikan dalam mengembangkan program literasi yang
+                        berkelanjutan.</li>
+                    <li>Memfasilitasi akses literasi digital dan teknologi untuk menjembatani kesenjangan informasi di era
+                        modern.</li>
                 </ul>
 
             </div>
@@ -223,7 +216,7 @@
             class="{{ $jumlahBuku < 5 ? 'flex justify-center flex-wrap' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5' }} gap-8 mt-20 px-6 md:px-20">
             @foreach ($topBooks as $item)
                 <div class="flex flex-col items-center text-center">
-                    <img src="https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/{{ $item->buku->img ?? 'default.jpg' }}"
+                    <img src="{{ $item->buku && $item->buku->img ? asset('storage/' . $item->buku->img) : asset('storage/buku/default.jpg') }}"
                         alt="Sampul Buku {{ $item->buku->judul ?? '-' }}" class="h-48 w-auto rounded shadow-md" />
                     <h3 class="mt-4 text-lg font-semibold text-black">{{ $item->buku->judul ?? '-' }}</h3>
                     <p class="text-gray-600 text-sm">{{ $item->buku->penulis ?? '-' }}</p>
@@ -352,7 +345,7 @@
             <div class="flex justify-center flex-wrap gap-8 mt-20 px-6 md:px-20">
                 @foreach ($volunteers as $volunteer)
                     <div class="flex flex-col items-center text-center">
-                        <img src="{{ env('SUPABASE_URL') . '/storage/v1/object/public/my-files/' . $volunteer->img }}"
+                        <img src="{{ $volunteer->img ? asset('storage/' . $volunteer->img) : asset('storage/voluntter/default.png') }}"
                             alt="{{ $volunteer->nama }}" class="h-48 w-auto rounded shadow-md">
                         <h3 class="mt-4 text-lg font-semibold text-black">{{ $volunteer->nama }}</h3>
                         <p class="text-gray-600 text-sm">{{ $volunteer->jabatan }}</p>

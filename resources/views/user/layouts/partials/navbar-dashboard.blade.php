@@ -7,17 +7,7 @@
 
         <!-- Logo (kiri) -->
         <div class="flex items-center space-x-2 ml-6">
-            @php
-                $logoPage = \App\Models\Page::where('slug', 'logo_beranda')->first();
-            @endphp
-
-            @if ($logoPage && $logoPage->img)
-                <img class="h-8 w-auto"
-                    src="https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/{{ $logoPage->img }}"
-                    alt="Logo">
-            @else
-                <p>Logo belum tersedia</p>
-            @endif
+            <img src="{{ asset('storage/icon/logo2.svg') }}" alt="Logo" class="h-8 w-auto" />
         </div>
 
         <!-- Mobile: Hamburger Menu -->

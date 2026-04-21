@@ -85,10 +85,8 @@
                                     $userName = $voluntter->nama ?? $userName;
                                 }
 
-                                $supabaseUrl =
-                                    'https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files';
                                 $userImgUrl = $userImg
-                                    ? $supabaseUrl . '/' . $userImg
+                                    ? asset('storage/' . $userImg)
                                     : asset('storage/admin/default.png'); // fallback ke gambar lokal
                             @endphp
 

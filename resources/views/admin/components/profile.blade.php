@@ -15,10 +15,8 @@
                 <div class="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4">
                     <img class="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0"
                         src="@if ($roleName === 'Admin') {{ $profileData->img ? asset('storage/' . $profileData->img) : asset('storage/admin/default.png') }}
-                             @elseif ($roleName === 'Voluntter')
-                                {{ $profileData->img
-                                    ? rtrim(env('SUPABASE_URL'), '/') . '/storage/v1/object/public/' . env('SUPABASE_BUCKET') . '/' . $profileData->img
-                                    : asset('storage/pengumuman/default.png') }} @endif"
+        @elseif ($roleName === 'Voluntter')
+            {{ $profileData->img ? asset('storage/' . $profileData->img) : asset('storage/voluntter/default.png') }} @endif"
                         alt="Foto Profil {{ $roleName }}">
 
                     <div>

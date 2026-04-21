@@ -14,9 +14,7 @@
             <div class="absolute -top-12 left-1/2 -translate-x-1/2">
                 <div class="w-28 h-28 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-200">
                     @if ($anggota && $anggota->img)
-                        <img src="{{ $anggota && $anggota->img
-                            ? rtrim(env('SUPABASE_URL'), '/') . '/storage/v1/object/public/' . env('SUPABASE_BUCKET') . '/' . $anggota->img
-                            : asset('storage/pengumuman/default.png') }}"
+                        <img src="{{ $anggota && $anggota->img ? asset('storage/' . $anggota->img) : asset('storage/anggota/default.png') }}"
                             alt="Foto Profil" class="w-full h-full object-cover" />
                     @else
                         <img src="{{ asset('storage/icon/default-user.png') }}" alt="Default Profile"

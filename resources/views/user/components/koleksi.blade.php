@@ -76,7 +76,7 @@
 
                             <div
                                 class="flex flex-col md:flex-row bg-gradient-to-r from-[#e0f2fe] to-[#bae6fd] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition duration-300">
-                                <img src="https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/{{ $buku->img }}"
+                                <img src="{{ $buku->img ? asset('storage/' . $buku->img) : asset('storage/buku/default.png') }}"
                                     alt="Sampul Buku"
                                     class="w-full md:w-40 h-48 md:h-56 object-cover object-center rounded-t-2xl md:rounded-t-none md:rounded-l-2xl mx-auto md:mx-0 md:my-auto" />
 

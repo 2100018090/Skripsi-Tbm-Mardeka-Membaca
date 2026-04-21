@@ -3,9 +3,7 @@
         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
             <td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
                 <img class="w-10 h-10 rounded-full"
-                    src="{{ $voluntter->img
-                        ? rtrim(env('SUPABASE_URL'), '/') . '/storage/v1/object/public/' . env('SUPABASE_BUCKET') . '/' . $voluntter->img
-                        : asset('storage/pengumuman/default.png') }}"
+                    src="{{ $voluntter->img ? asset('storage/' . $voluntter->img) : asset('storage/voluntter/default.png') }}"
                     alt="user photo">
 
                 <div class="text-sm font-normal text-gray-500 dark:text-gray-400">

@@ -7,22 +7,13 @@
             <div class="relative min-h-screen flex flex-col items-center justify-center text-center px-4">
                 <!-- Judul dan Subjudul -->
                 <div>
-                    @php
-                        $page = \App\Models\Page::where('slug', 'landing_page')->first();
-                    @endphp
+                    <h1 class="text-6xl font-bold text-[#003350]">Hallo,<br>Selamat Datang</h1>
 
-                    @if ($page && $page->content)
-                        <h1 class="text-6xl font-bold text-[#003350]">{!! $page->content !!}</h1>
-                    @endif
+                    <h3 class="text-lg mt-2">
+                        Dengan TBM Mardeka Membaca jelajahi buku dan <br>
+                        temukan rekomendasi bacaan
+                    </h3>
 
-                    @php
-                        $page = \App\Models\Page::where('slug', 'landing_page2')->first();
-                    @endphp
-                    @if ($page && $page->content)
-                        <h3 class="text-lg mt-2">
-                            {!! $page->content !!}
-                        </h3>
-                    @endif
                 </div>
 
                 <!-- Gambar versi MOBILE -->
@@ -41,21 +32,8 @@
                 <!-- Kontak & Sosial Media versi DESKTOP -->
                 <div class="absolute bottom-14 left-4 text-left hidden md:block">
                     <h6 class="text-sm text-[#64C0B7]">Hubungi kami:</h6>
-                    @php
-                        $page = \App\Models\Page::where('slug', 'alamat')->first();
-                    @endphp
-
-                    @if ($page && $page->content)
-                        <h6 class="text-sm text-[#737373]">Alamat: {!! $page->content !!}</h6>
-                    @endif
-
-                    @php
-                        $page = \App\Models\Page::where('slug', 'email')->first();
-                    @endphp
-
-                    @if ($page && $page->content)
-                        <h6 class="text-sm text-[#737373]">Email: {!! $page->content !!}</h6>
-                    @endif
+                    <h6 class="text-sm text-[#737373]">Alamat: Kretek, Bantul, Yogyakarta</h6>
+                    <h6 class="text-sm text-[#737373]">Email: tbm@gmail.com</h6>
                 </div>
                 <div class="absolute bottom-4 left-4 hidden md:flex space-x-4 text-[#003350]">
                     <a href="https://www.facebook.com" target="_blank">
@@ -75,21 +53,8 @@
                 <!-- Kontak & Sosial Media versi MOBILE -->
                 <div class="mt-10 text-left md:hidden w-full px-6">
                     <h6 class="text-sm text-[#64C0B7]">Hubungi kami:</h6>
-                    @php
-                        $page = \App\Models\Page::where('slug', 'alamat')->first();
-                    @endphp
-
-                    @if ($page && $page->content)
-                        <h6 class="text-sm text-[#737373]">Alamat: {!! $page->content !!}</h6>
-                    @endif
-
-                    @php
-                        $page = \App\Models\Page::where('slug', 'email')->first();
-                    @endphp
-
-                    @if ($page && $page->content)
-                        <h6 class="text-sm text-[#737373]">Email: {!! $page->content !!}</h6>
-                    @endif
+                    <h6 class="text-sm text-[#737373]">Alamat: Kretek, Bantul, Yogyakarta</h6>
+                    <h6 class="text-sm text-[#737373]">Email: tbm@gmail.com</h6>
 
                     <div class="mt-2 flex justify-start space-x-4 text-[#003350]">
                         <a href="https://www.facebook.com" target="_blank">
@@ -111,15 +76,7 @@
 
         <!-- Kolom kanan: Gambar Buku versi DESKTOP -->
         <div class="flex-1 bg-white hidden md:flex items-center justify-center">
-            @php
-                $logoPage = \App\Models\Page::where('slug', 'cover_landing')->first();
-            @endphp
-
-            @if ($logoPage && $logoPage->img)
-                <img class="w-[380px] h-[380px] object-contain"
-                    src="https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/{{ $logoPage->img }}"
-                    alt="Cover">
-            @endif
+            <img src="{{ asset('storage/img/cover3.jpg') }}" alt="Buku" class="w-[380px] h-[380px] object-contain">
         </div>
     </div>
 
@@ -140,16 +97,7 @@
         <div class="mt-12 md:mt-16 flex flex-col md:flex-row items-center justify-center gap-10 px-4 md:px-20">
             <!-- Gambar kiri -->
             <div class="flex-shrink-0">
-                @php
-                    $logoPage = \App\Models\Page::where('slug', 'visi')->first();
-                    $page = \App\Models\Page::where('slug', 'visi')->first();
-                @endphp
-
-                @if ($logoPage && $logoPage->img)
-                    <img class="h-[220px] md:h-[330px] w-auto"
-                        src="https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/{{ $logoPage->img }}"
-                        alt="tentang">
-                @endif
+                <img src="{{ asset('storage/img/tentang.jpg') }}" alt="Tentang" class="h-[220px] md:h-[330px] w-auto">
             </div>
 
             <!-- Teks kanan -->
@@ -158,9 +106,8 @@
                     Visi TBM Mardeka Membaca
                 </h2>
                 <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-6 text-center md:text-justify">
-                    @if ($page && $page->content)
-                        {!! $page->content !!}
-                    @endif
+                    Menjadi pusat literasi masyarakat yang inklusif dan inspiratif untuk menumbuhkan budaya baca, belajar,
+                    dan berkarya di semua kalangan.
                 </p>
 
                 <h2 class="text-lg md:text-2xl font-bold text-[#64C0B7] mb-3 md:mb-4 text-center md:text-left">
@@ -168,12 +115,15 @@
                 </h2>
                 <ul
                     class="list-disc list-outside pl-5 text-gray-700 leading-relaxed space-y-2 text-sm md:text-base text-justify">
-                    @php
-                        $page = \App\Models\Page::where('slug', 'misi')->first();
-                    @endphp
-                    @if ($page && $page->content)
-                        {!! $page->content !!}
-                    @endif
+                    <li>Mendorong minat baca masyarakat melalui penyediaan bahan bacaan yang beragam dan berkualitas.</li>
+                    <li>Menyediakan ruang belajar terbuka yang ramah, inklusif, dan mendukung pengembangan potensi individu.
+                    </li>
+                    <li>Mengadakan kegiatan edukatif dan kreatif, seperti kelas menulis, dongeng, dan diskusi buku secara
+                        rutin.</li>
+                    <li>Berjejaring dengan komunitas dan lembaga pendidikan dalam mengembangkan program literasi yang
+                        berkelanjutan.</li>
+                    <li>Memfasilitasi akses literasi digital dan teknologi untuk menjembatani kesenjangan informasi di era
+                        modern.</li>
                 </ul>
 
             </div>
@@ -191,10 +141,11 @@
             $jumlahBuku = count($topBooks);
         @endphp
 
-        <div class="{{ $jumlahBuku < 5 ? 'flex justify-center flex-wrap' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5' }} gap-8 mt-20 px-6 md:px-20">
+        <div
+            class="{{ $jumlahBuku < 5 ? 'flex justify-center flex-wrap' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5' }} gap-8 mt-20 px-6 md:px-20">
             @foreach ($topBooks as $item)
                 <div class="flex flex-col items-center text-center">
-                    <img src="https://bubjbpluqoznbyjmsefs.supabase.co/storage/v1/object/public/my-files/{{ $item->buku->img ?? 'default.jpg' }}"
+                    <img src="{{ $item->buku && $item->buku->img ? asset('storage/' . $item->buku->img) : asset('storage/buku/default.jpg') }}"
                         alt="Sampul Buku {{ $item->buku->judul ?? '-' }}" class="h-48 w-auto rounded shadow-md" />
                     <h3 class="mt-4 text-lg font-semibold text-black">{{ $item->buku->judul ?? '-' }}</h3>
                     <p class="text-gray-600 text-sm">{{ $item->buku->penulis ?? '-' }}</p>
@@ -220,7 +171,8 @@
                     </div>
 
                     <!-- Tombol Lihat Ulasan -->
-                    <button data-modal-target="modal-ulasan-{{ $item->buku->id }}" data-modal-toggle="modal-ulasan-{{ $item->buku->id }}"
+                    <button data-modal-target="modal-ulasan-{{ $item->buku->id }}"
+                        data-modal-toggle="modal-ulasan-{{ $item->buku->id }}"
                         class="mt-3 text-sm text-white bg-[#64C0B7] hover:bg-[#50a49c] px-4 py-1 rounded">
                         Lihat Ulasan
                     </button>
@@ -259,7 +211,9 @@
 
                                     @forelse ($ulasan as $review)
                                         <div class="border-b pb-3">
-                                            <p class="text-sm text-gray-700"><strong>{{ $review->anggota->nama ?? 'Anonim' }}:</strong></p>
+                                            <p class="text-sm text-gray-700">
+                                                <strong>{{ $review->anggota->nama ?? 'Anonim' }}:</strong>
+                                            </p>
                                             <p class="text-gray-800 italic">"{{ $review->ulasan }}"</p>
                                         </div>
                                     @empty
@@ -292,7 +246,7 @@
             <div class="flex justify-center flex-wrap gap-8 mt-20 px-6 md:px-20">
                 @foreach ($volunteers as $volunteer)
                     <div class="flex flex-col items-center text-center">
-                        <img src="{{ env('SUPABASE_URL') . '/storage/v1/object/public/my-files/' . $volunteer->img }}"
+                        <img src="{{ $volunteer->img ? asset('storage/' . $volunteer->img) : asset('storage/voluntter/default.png') }}"
                             alt="{{ $volunteer->nama }}" class="h-48 w-auto rounded shadow-md">
                         <h3 class="mt-4 text-lg font-semibold text-black">{{ $volunteer->nama }}</h3>
                         <p class="text-gray-600 text-sm">{{ $volunteer->jabatan }}</p>

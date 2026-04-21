@@ -249,12 +249,8 @@
 
                                 $img =
                                     $anggota && $anggota->img
-                                        ? rtrim(env('SUPABASE_URL'), '/') .
-                                            '/storage/v1/object/public/' .
-                                            env('SUPABASE_BUCKET') .
-                                            '/' .
-                                            $anggota->img
-                                        : 'https://ui-avatars.com/api/?name=' . urlencode($user->name ?? 'Guest');
+                                        ? asset('storage/' . $anggota->img)
+                                        : asset('storage/anggota/default.png');
                             @endphp
 
                             <img class="h-8 w-8 rounded-full object-cover" src="{{ $img }}"

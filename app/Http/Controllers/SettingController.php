@@ -169,34 +169,21 @@ class SettingController extends Controller
 
         $filePath = null;
 
-        // 2. Upload ke Supabase jika ada gambar
+        // =========================
+        // ✅ UPLOAD GAMBAR (LOCAL)
+        // =========================
         if ($request->hasFile('img')) {
-            $file      = $request->file('img');
-            $ext       = $file->getClientOriginalExtension();
-            $filename  = 'pengumuman-' . Str::uuid() . '.' . $ext;
-            $filePath  = "pengumuman/{$filename}";
-            $fileBytes = file_get_contents($file->getPathname());
+            $file = $request->file('img');
+            $ext = $file->getClientOriginalExtension();
+            $filename = 'pengumuman-' . Str::uuid() . '.' . $ext;
 
-            $url = rtrim(env('SUPABASE_URL'), '/') .
-                "/storage/v1/object/" .
-                env('SUPABASE_BUCKET') .
-                "/{$filePath}";
-
-            $resp = Http::withHeaders([
-                'apikey'        => env('SUPABASE_SERVICE_ROLE_KEY'),
-                'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_ROLE_KEY'),
-                'Content-Type'  => $file->getMimeType(),
-            ])->withBody($fileBytes, $file->getMimeType())
-            ->put($url);
-
-            if (!$resp->successful()) {
-                return back()->withErrors([
-                    'img' => 'Upload gambar ke Supabase gagal: ' . $resp->body()
-                ])->withInput();
-            }
+            // simpan ke storage/app/public/pengumuman
+            $filePath = $file->storeAs('pengumuman', $filename, 'public');
         }
 
-        // 3. Simpan pengumuman ke database
+        // =========================
+        // ✅ SIMPAN KE DATABASE
+        // =========================
         $pengumuman = Pengumuman::create([
             'judul'   => $validated['judul'],
             'tanggal' => $validated['tanggal'],
@@ -204,11 +191,14 @@ class SettingController extends Controller
             'img'     => $filePath,
         ]);
 
-        // 4. Ambil semua anggota
+        // =========================
+        // ✅ AMBIL SEMUA ANGGOTA
+        // =========================
         $anggotaList = Anggota::with('akun')->get();
 
         foreach ($anggotaList as $anggota) {
-            // 5. Simpan notifikasi ke database
+
+            // 1. Simpan notifikasi
             Notifikasi::create([
                 'id_anggota'    => $anggota->id,
                 'judul'         => 'Pengumuman Baru',
@@ -216,7 +206,7 @@ class SettingController extends Controller
                 'status_dibaca' => false,
             ]);
 
-            // 6. Kirim email jika anggota punya akun dan email
+            // 2. Kirim email (jika ada email)
             if ($anggota->akun && $anggota->akun->email) {
                 Mail::send('emails.pengumuman', [
                     'judul'   => $pengumuman->judul,
@@ -229,7 +219,9 @@ class SettingController extends Controller
             }
         }
 
-        // 8. Catat log aktivitas admin
+        // =========================
+        // ✅ LOG AKTIVITAS
+        // =========================
         ActivityLog::create([
             'user_id'   => auth()->id(),
             'aksi'      => 'Tambah Pengumuman',
@@ -237,9 +229,11 @@ class SettingController extends Controller
             'ip_address'=> $request->ip(),
         ]);
 
-            // 7. Redirect sukses
-            return redirect()->route('admin.pengumuman')
-                            ->with('success', 'Pengumuman berhasil ditambahkan & email terkirim!');
+        // =========================
+        // ✅ REDIRECT
+        // =========================
+        return redirect()->route('admin.pengumuman')
+                        ->with('success', 'Pengumuman berhasil ditambahkan & email terkirim!');
     }
 
     public function findPengumumanId($id)
@@ -548,7 +542,7 @@ class SettingController extends Controller
     public function createBuku(Request $request)
     {
         try {
-            // Validasi input
+            // ✅ Validasi input
             $validated = $request->validate([
                 'judul' => 'required|string|max:70',
                 'id_kategori' => 'required|exists:kategoris,id',
@@ -565,31 +559,19 @@ class SettingController extends Controller
                 'stok' => 'required_if:tipe,fisik|integer|min:0|nullable',
             ]);
 
-            // Upload gambar ke Supabase - folder cover/
+            // =========================
+            // ✅ UPLOAD GAMBAR (LOCAL)
+            // =========================
             $fileImg = $request->file('img');
             $extImg = $fileImg->getClientOriginalExtension();
             $filenameImg = Str::slug($validated['judul']) . '-' . Str::uuid() . '.' . $extImg;
-            $filePathImg = "cover/{$filenameImg}";
-            $fileBytesImg = file_get_contents($fileImg->getPathname());
 
-            $urlImg = rtrim(env('SUPABASE_URL'), '/') .
-                "/storage/v1/object/" .
-                env('SUPABASE_BUCKET') .
-                "/{$filePathImg}";
+            // simpan ke storage/app/public/cover
+            $filePathImg = $fileImg->storeAs('cover', $filenameImg, 'public');
 
-            $respImg = Http::withHeaders([
-                'apikey' => env('SUPABASE_SERVICE_ROLE_KEY'),
-                'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_ROLE_KEY'),
-                'Content-Type' => $fileImg->getMimeType(),
-            ])->withBody($fileBytesImg, $fileImg->getMimeType())
-            ->put($urlImg);
-
-            if (!$respImg->successful()) {
-                return back()->withErrors(['img' => 'Upload gambar ke Supabase gagal: ' . $respImg->body()])
-                            ->withInput();
-            }
-
-            // Simpan data buku
+            // =========================
+            // ✅ SIMPAN DATA BUKU
+            // =========================
             $buku = Buku::create([
                 'judul' => $validated['judul'],
                 'id_kategori' => $validated['id_kategori'],
@@ -603,30 +585,17 @@ class SettingController extends Controller
                 'img' => $filePathImg,
             ]);
 
-            // Jika digital, upload file PDF & simpan ke digitals
+            // =========================
+            // ✅ JIKA DIGITAL (UPLOAD PDF)
+            // =========================
             if ($validated['tipe'] == 'digital') {
+
                 $filePdf = $request->file('file_url');
                 $extPdf = $filePdf->getClientOriginalExtension();
                 $filenamePdf = Str::slug($validated['judul']) . '-' . Str::uuid() . '.' . $extPdf;
-                $filePathPdf = "pdf/{$filenamePdf}";
-                $fileBytesPdf = file_get_contents($filePdf->getPathname());
 
-                $urlPdf = rtrim(env('SUPABASE_URL'), '/') .
-                    "/storage/v1/object/" .
-                    env('SUPABASE_BUCKET') .
-                    "/{$filePathPdf}";
-
-                $respPdf = Http::withHeaders([
-                    'apikey' => env('SUPABASE_SERVICE_ROLE_KEY'),
-                    'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_ROLE_KEY'),
-                    'Content-Type' => $filePdf->getMimeType(),
-                ])->withBody($fileBytesPdf, $filePdf->getMimeType())
-                ->put($urlPdf);
-
-                if (!$respPdf->successful()) {
-                    return back()->withErrors(['file_url' => 'Upload file PDF ke Supabase gagal: ' . $respPdf->body()])
-                                ->withInput();
-                }
+                // simpan ke storage/app/public/pdf
+                $filePathPdf = $filePdf->storeAs('pdf', $filenamePdf, 'public');
 
                 Digital::create([
                     'id_buku' => $buku->id,
@@ -635,8 +604,11 @@ class SettingController extends Controller
                 ]);
             }
 
-            // Jika fisik, simpan stok
+            // =========================
+            // ✅ JIKA FISIK
+            // =========================
             elseif ($validated['tipe'] == 'fisik') {
+
                 $fisik = Fisik::create([
                     'id_buku' => $buku->id,
                     'stok' => $validated['stok'],
@@ -656,8 +628,11 @@ class SettingController extends Controller
                 }
             }
 
-            // ✅ Kirim notifikasi ke semua anggota
+            // =========================
+            // ✅ NOTIFIKASI
+            // =========================
             $anggotaList = \App\Models\Anggota::all();
+
             foreach ($anggotaList as $anggota) {
                 \App\Models\Notifikasi::create([
                     'id_anggota'    => $anggota->id,
@@ -1662,7 +1637,6 @@ class SettingController extends Controller
         return back()->with('success', 'Bukti pembayaran berhasil diajukan.');
     }
 
-
     public function konfirmasiPembayaran($id)
     {
         $peminjaman = Peminjaman::with(['buku', 'anggota'])->findOrFail($id);
@@ -1849,7 +1823,9 @@ class SettingController extends Controller
 
     public function updateOnlyAnggota(Request $request, $id)
     {
-        // Validasi input
+        // =========================
+        // 1. VALIDASI
+        // =========================
         $request->validate([
             'nama'   => 'required|string|max:50',
             'notlp'  => ['required', 'string', 'max:15', 'regex:/^[0-9]+$/'],
@@ -1861,47 +1837,44 @@ class SettingController extends Controller
             'img.mimes'   => 'Format gambar harus jpg, jpeg, png, atau webp.',
         ]);
 
-        // Ambil data anggota
+        // =========================
+        // 2. AMBIL DATA
+        // =========================
         $anggota = Anggota::findOrFail($id);
         $anggota->nama   = $request->nama;
         $anggota->notlp  = $request->notlp;
         $anggota->alamat = $request->alamat;
 
-        // Upload gambar ke Supabase
+        // =========================
+        // 3. UPLOAD GAMBAR (LOCAL)
+        // =========================
         if ($request->hasFile('img')) {
-            $file     = $request->file('img');
-            $ext      = $file->getClientOriginalExtension();
-            $filename = 'anggota-' . Str::uuid() . '.' . $ext;
-            $filePath = "anggota/{$filename}";
-            $fileBytes = file_get_contents($file->getPathname());
 
-            $url = rtrim(env('SUPABASE_URL'), '/') .
-                "/storage/v1/object/" .
-                env('SUPABASE_BUCKET') .
-                "/{$filePath}";
-
-            $response = Http::withHeaders([
-                'apikey'        => env('SUPABASE_SERVICE_ROLE_KEY'),
-                'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_ROLE_KEY'),
-                'Content-Type'  => $file->getMimeType(),
-            ])
-            ->withBody($fileBytes, $file->getMimeType())
-            ->put($url);
-
-            if (!$response->successful()) {
-                return back()->withErrors([
-                    'img' => 'Upload gambar ke Supabase gagal: ' . $response->body()
-                ])->withInput();
+            // (opsional) hapus gambar lama
+            if ($anggota->img && file_exists(storage_path('app/public/' . $anggota->img))) {
+                unlink(storage_path('app/public/' . $anggota->img));
             }
+
+            $file = $request->file('img');
+            $ext = $file->getClientOriginalExtension();
+            $filename = 'anggota-' . Str::uuid() . '.' . $ext;
+
+            // simpan ke storage/app/public/anggota
+            $filePath = $file->storeAs('anggota', $filename, 'public');
 
             $anggota->img = $filePath;
         }
 
-        // Simpan perubahan
+        // =========================
+        // 4. SIMPAN DATA
+        // =========================
         $anggota->save();
 
-        // Tambahkan log aktivitas
+        // =========================
+        // 5. LOG AKTIVITAS
+        // =========================
         $akun = auth()->user();
+
         if ($akun) {
             ActivityLog::create([
                 'user_id'    => $akun->id,
@@ -1911,7 +1884,9 @@ class SettingController extends Controller
             ]);
         }
 
-        // Kirim pesan sukses ke view
+        // =========================
+        // 6. RESPONSE
+        // =========================
         return redirect()->back()->with('success', '✅ Data anggota berhasil diperbarui.');
     }
 
